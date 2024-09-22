@@ -2,8 +2,19 @@ from flask import Flask, jsonify, request, render_template
 import sqlite3
 from flask import jsonify
 from flask_cors import CORS
+# Authenticatie en Autorisatie (OWASP Top 10: A01 - Broken Access Control)
+# Aangepaste code: from werkzeug.security import generate_password_hash, check_password_hash
+# hashed_password = generate_password_hash(password)
+
+# Beveiligde headers (OWASP Top 10: A06 - Security Misconfiguration)
+# Aangepaste code; from flask_talisman import Talisman
+# Talisman(app)
+
 
 app = Flask(__name__)
+
+# Cross-Origin Resource Sharing (CORS) (OWASP Top 10: A05 - Security Misconfiguration)
+# Aangepaste code:  CORS(app, resources={r"/*": {"origins": ["https://vertrouwd-domein.com"]}})
 
 CORS(app, resources={r"/*": {"origins": "*"}})
 
