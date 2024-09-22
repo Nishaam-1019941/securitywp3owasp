@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container text-center mt-5">
+        <h1>Login Page</h1>
+        <h2>Voor users/docenten</h2>
+        <form id="loginFormUsers" method="POST" class="mt-4">
+            <div class="form-group">
+                <input type="username" name="username" placeholder="Username" class="form-control">
+            </div>
+            <div class="form-group">
+                <input type="password" name="password" placeholder="Password" class="form-control">
+            </div>
+            <input type="submit" name="submit" value="Verzenden" class="btn btn-primary">
+        </form>
+    </div>
+
+    <div class="container text-center mt-4">
+        <form id="loginFormStudents" method="POST" class="mt-4">
+            <div class="form-group">
+                <input type="text" name="student_id" placeholder="student id" class="form-control">
+            </div>
+            <input type="submit" name="submit" value="Verzenden" class="btn btn-primary">
+        </form>
+    </div>
+
+    <script>
+      document.getElementById('loginFormUsers').addEventListener('submit', function(event) {
+        
+        event.preventDefault();
+    
+        var username = document.getElementsByName("username")[0].value;
+        var password = document.getElementsByName("password")[0].value;
+    
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "http://127.0.0.1:8000/login", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+    
+        xhr.onreadystatechange = function(login) {
+          if (xhr.status === 200) {
+              
+              var response = JSON.parse(xhr.responseText);
+              console.log(response); 
+              
+                  window.location.href = "/logged_in";
+                  return;
+          }
+    
+          return alert("Login failed");
+      };
+        var data = JSON.stringify({ username: username, password: password });
+        xhr.send(data);
+      });
+    </script>
+    
+    <script>
+      document.getElementById('loginFormStudents').addEventListener('submit', function(event) {
+        
+        event.preventDefault();
+    
+        var student_id = document.getElementsByName("student_id")[0].value;
+    
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "http://127.0.0.1:8000/login_student", true); // Fixed URL
+        xhr.setRequestHeader("Content-Type", "application/json");
+    
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState === 4) { // Check if request is complete
+              if (xhr.status === 200) {
+                  var response = JSON.parse(xhr.responseText);
+                  console.log(response);
+                  // Example code to run after successful login in index.html
+                  const studentNumber = 'theStudentNumber'; // Get this from your login response
+                  sessionStorage.setItem('studentNumber', studentNumber);
+                  window.location.href = '/student_logged_in?student_id=' + student_id; // Redirect to the logged-in page               
+                  
+              } else {
+                  // Parse response only if it's available
+                  var response = xhr.responseText ? JSON.parse(xhr.responseText) : {};
+                  alert("Login failed: " + (response.message || "Unknown error"));
+              }
+          }
+      };
+    
+        var data = JSON.stringify({ student_id: student_id });
+        xhr.send(data);
+      });
+    </script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gebruikersformulier</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Vul de studentinformatie in</h2>
+        <form onsubmit="handleSubmit(event)">
+            <div class="form-group">
+                <label for="student_id">Student id:</label>
+                <input type="number" class="form-control" id="student_id" name="student_id">
+            </div>
+            
+            <div class="form-group">
+                <label for="name">Naam:</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="class">Class:</label>
+                <input type="text" class="form-control" id="class" name="class" required>
+            </div>
+            
+            <input type="submit" class="btn btn-primary" value="Opslaan">
+        </form>
+    </div>
+
+    <script>
+        function handleSubmit(event) {
+            event.preventDefault(); 
+            const formData = {
+                student_id: document.getElementById('student_id').value,
+                name: document.getElementById('name').value,
+                class: document.getElementById('class').value,
+            };
+            
+            fetch('/api/student', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                window.location.href = 'logged_in';
+                
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                
+            });
+        } 
+    </script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gebruikersformulier</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Update de student</h2>
+        <form onsubmit="handleSubmit(event)">
+            <div class="form-group">
+                <label for="student_id">student id:</label>
+                <input type="number" class="form-control" id="student_id" name="student_id" value='{{student.student_id}}' readonly>
+            </div>
+            
+            <div class="form-group">
+                <label for="name">Naam:</label>
+                <input type="text" class="form-control" id="name" name="name" value="{{student.name}}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="class">class:</label>
+                <input type="text" class="form-control" id="class" name="class" value="{{student.class}}" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Opslaan</button>
+        </form>
+    </div>
+
+    <script>
+        function handleSubmit(event) {
+            event.preventDefault(); 
+            const formData = {
+                student_id: document.getElementById('student_id').value,
+                name: document.getElementById('name').value,
+                class: document.getElementById('class').value,
+            };
+            console.log(formData)
+            fetch('/api/student/' + encodeURIComponent(formData.student_id), {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                window.location.href = '/logged_in';
+                
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                
+            });
+        } 
+    </script>
+</body>
+</html>

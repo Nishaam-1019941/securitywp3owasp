@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Logged In</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body class="container mt-5">
+    <h1 id="greeting" class="display-4">Welcome, Student!</h1>
+    <div id="statementsContainer" class="mt-4"></div>
+    <div id="message" class="alert alert-info mt-3" role="alert"></div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const studentNumber = urlParams.get('student_id');
+
+        function fetchAndDisplayStudent() {
+            fetch(`http://127.0.0.1:8000/api/student/${studentNumber}`, { method: 'GET' })
+                .then(data => {
+                    if (!data.ok) {
+                        throw new Error('Network response was not ok.');
+                    }
+                    return data.json();
+                })
+                .then(data => {
+                    document.getElementById('greeting').textContent = `Welcome, ${data['name']} (${data.class})!`;
+                })
+                .catch(error => console.error('Error fetching student:', error));
+            }
+
+         
+        function fetchAndDisplayStatements() {
+            fetch(`http://127.0.0.1:8000/api/student/${studentNumber}/statement`, { method: 'GET' })
+                .then(response => {
+                    if (!response.ok) {
+                        if (response.status === 409) {
+                            // set message
+                            document.getElementById('message').textContent = 'You have already completed all statements.';
+                            document.getElementById('message').classList.add('alert-warning');
+                        } else {
+                            // Handle other non-successful responses
+                            throw new Error('Network response was not ok.');
+                        }
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    displayStatements(data);
+                })
+                .catch(error => console.error('Error fetching statements:', error));
+        }
+
+        function displayStatements(data) {
+            const container = document.getElementById('statementsContainer');
+            container.innerHTML = ''; 
+            const statement = document.createElement('div');
+            statement.className = 'mb-3';
+            statement.innerHTML = `
+                <h2 class="h5">Statement ${data.statement_number}</h2>
+                ${data.statement_choices.map(choice => `
+                    <button class="btn btn-primary m-1" onclick="submitChoice('${data.statement_number}', '${choice.choice_number}')">${choice.choice_text}</button>
+                `).join('')}
+            `;
+            container.appendChild(statement);
+        }
+
+        function submitChoice(statementNumber, choiceNumber) {
+            fetch(`http://127.0.0.1:8000/api/student/${studentNumber}/statement/${statementNumber}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ statement_choice: choiceNumber }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data); 
+                fetchAndDisplayStatements(); 
+            })
+            .catch(error => console.error('Error submitting choice:', error));
+        }
+        
+        fetchAndDisplayStudent();
+        fetchAndDisplayStatements();
+    </script>
+</body>
+</html>
