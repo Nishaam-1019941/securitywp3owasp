@@ -45,14 +45,27 @@
                         deleteButtonCell.appendChild(deleteButton);
                         row.appendChild(deleteButtonCell);
 
-                        const updateButtonCell = document.createElement('td');
+                                              const updateButtonCell = document.createElement('td');
                         const updateButton = document.createElement('button');
                         updateButton.className = 'btn btn-primary';
                         updateButton.textContent = 'Update user';
+                        
+                        function isValidUserId(userId) {
+                            // Add your validation logic here, for example:
+                            // Check if userId is a number and within a valid range
+                            return /^\d+$/.test(userId);
+                        }
+                        
                         updateButton.addEventListener('click', () => {
-                            console.log('Update button clicked for user:', user[0]);
-                            window.location.href = `update-user/${user[0]}`; 
+                            const userId = user[0];
+                            if (isValidUserId(userId)) {
+                                console.log('Update button clicked for user:', userId);
+                                window.location.href = `update-user/${userId}`;
+                            } else {
+                                console.error('Invalid user ID:', userId);
+                            }
                         });
+                        
                         updateButtonCell.appendChild(updateButton);
                         row.appendChild(updateButtonCell);
 
@@ -140,8 +153,19 @@
                         const updateButton = document.createElement('button');
                         updateButton.className = 'btn btn-primary';
                         updateButton.textContent = 'Update student';
+                        // Add click event listener with validation
                         updateButton.addEventListener('click', () => {
-                            window.location.href = `update-student/${student.student_id}`; 
+                        // Example of simple validation for student ID (e.g., assuming it should be numeric)
+                        const validStudentIDPattern = /^[0-9]+$/;  // Adjust the pattern based on your requirements
+
+                        if (validStudentIDPattern.test(student.student_id)) {
+                        // Safe redirection with validated student ID
+                        window.location.href = `/update-student/${student.student_id}`;
+                        } else {
+                        // Handle invalid student ID
+                        console.error('Invalid student ID');
+                        alert('Error: Invalid student ID');
+                        }
                         });
                         updateButtonCell.appendChild(updateButton);
                         row.appendChild(updateButtonCell);
