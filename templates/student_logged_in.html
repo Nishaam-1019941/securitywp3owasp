@@ -50,15 +50,21 @@
                 .catch(error => console.error('Error fetching statements:', error));
         }
 
+         function sanitizeHTML(str) {
+            const tempDiv = document.createElement('div');
+            tempDiv.textContent = str;
+            return tempDiv.innerHTML;
+        }
+        
         function displayStatements(data) {
             const container = document.getElementById('statementsContainer');
             container.innerHTML = ''; 
             const statement = document.createElement('div');
             statement.className = 'mb-3';
             statement.innerHTML = `
-                <h2 class="h5">Statement ${data.statement_number}</h2>
+                <h2 class="h5">Statement ${sanitizeHTML(data.statement_number)}</h2>
                 ${data.statement_choices.map(choice => `
-                    <button class="btn btn-primary m-1" onclick="submitChoice('${data.statement_number}', '${choice.choice_number}')">${choice.choice_text}</button>
+                    <button class="btn btn-primary m-1" onclick="submitChoice('${sanitizeHTML(data.statement_number)}', '${sanitizeHTML(choice.choice_number)}')">${sanitizeHTML(choice.choice_text)}</button>
                 `).join('')}
             `;
             container.appendChild(statement);
