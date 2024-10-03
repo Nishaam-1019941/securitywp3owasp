@@ -43,6 +43,7 @@ command4 = """
     CREATE TABLE IF NOT EXISTS users (
     username TEXT PRIMARY KEY,
     password TEXT,
+    salt TEXT,
     name TEXT,
     isAdmin INTEGER
     ) """
